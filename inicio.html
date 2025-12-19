@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inicio - Nuestra Historia</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Un pequeño estilo extra solo para la imagen de esta página */
+    .hero-img-container {
+      width: 100%;
+      height: 300px;
+      overflow: hidden;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 204, 255, 0.2);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    
+    .hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Esto hace que la foto se recorte bien sin estirarse */
+      object-position: center;
+      transition: transform 0.5s ease;
+    }
+
+    .hero-img:hover {
+      transform: scale(1.05);
+    }
+
+    .welcome-text {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hearts-bg">
+    <div class="heart">❤</div><div class="heart">❤</div><div class="heart">❤</div>
+    <div class="heart">❤</div><div class="heart">❤</div><div class="heart">❤</div>
+    <div class="heart">❤</div><div class="heart">❤</div><div class="heart">❤</div>
+  </div>
+
+  <nav class="navbar">
+    <a href="inicio.html" class="nav-btn active">Inicio</a>
+    <a href="index.html" class="nav-btn">Carta</a> 
+    <a href="galeria.html" class="nav-btn">Galería</a>
+    <a href="contacto.html" class="nav-btn">Nuestra Canción</a>
+  </nav>
+
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="seal" aria-hidden="true">★</div> <div>
+          <h1>Bienvenida, Marian</h1>
+          <div class="meta">Un pequeño rincón digital solo para ti</div>
+        </div>
+      </header>
+
+      <main>
+        <div class="hero-img-container">
+          <img src="https://drive.google.com/uc?export=view&id=1Q3LiIJTk237fPXRUJOWz1V6kSnxEy5Zc" alt="Nosotros" class="hero-img">
+        </div>
+
+        <div class="welcome-text">
+          <p class="p">
+            ¡Hola, mi niña! ❤️ <br>
+            He creado este espacio para celebrar estos <strong>14 meses</strong> juntos. 
+            Aquí no hay redes sociales, ni ruido, ni distracciones. Solo recuerdos, palabras sinceras 
+            y la música que nos conecta.
+          </p>
+          <p class="p">
+            Navega por las secciones de arriba para encontrar una carta escrita desde el corazón, 
+            nuestras fotos favoritas y esa canción que me recuerda a ti.
+          </p>
+        </div>
+
+        <div class="quote" style="text-align: center;">
+          “Para aprender a quererte voy a estudiar cómo se cumplen tus sueños,
+          voy a leerte siempre muy lentamente, quiero entenderte.”
+          <br>
+          <span style="font-size: 0.8em; opacity: 0.8; margin-top:10px; display:block;">— Morat</span>
+        </div>
+
+      </main>
+
+      <footer>
+        <div class="brand">Creado con amor por Roger</div>
+        <div class="thanks">19 de Diciembre, 2025</div>
+      </footer>
+    </div>
+  </div>
+
+</body>
+</html>
