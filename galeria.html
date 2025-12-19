@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nuestra Galería</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Indie+Flower&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- ESTILOS ESPECÍFICOS DE LA GALERÍA --- */
+    
+    /* 1. Grid del sistema */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1fr; /* Móvil: 1 columna */
+      gap: 30px;
+      padding: 20px;
+    }
+
+    /* PC: 3 columnas */
+    @media (min-width: 768px) {
+      .gallery-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* 2. Estilo Scrapbook / Polaroid */
+    .gallery-item {
+      position: relative;
+      cursor: pointer;
+      opacity: 0; /* Para el fade-in inicial */
+      animation: fadeInUp 0.8s ease forwards;
+      transition: transform 0.3s ease;
+    }
+
+    .gallery-item:hover {
+      transform: scale(1.05) rotate(0deg) !important; /* Se endereza y crece */
+      z-index: 10;
+    }
+
+    .polaroid-frame {
+      background-color: white; /* Color base, luego lo cambiamos con nth-child */
+      padding: 15px 15px 40px 15px; /* Más padding abajo para el texto */
+      border-radius: 4px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transform: rotate(var(--rot)); /* Rotación aleatoria sutil */
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Efecto Cinta Adhesiva (Tape) */
+    .tape {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 30px;
+      background-color: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 5;
+    }
+
+    /* Contenedor de la imagen para el zoom y el overlay */
+    .img-wrapper {
+      width: 100%;
+      height: 250px;
+      overflow: hidden;
+      border-radius: 2px;
+      position: relative;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .gallery-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.5s ease; /* Zoom lento constante */
+    }
+
+    /* Efecto Zoom Lento continuo */
+    .gallery-item:hover .gallery-img {
+      transform: scale(1.15);
+    }
+
+    /* Texto oculto (Overlay) */
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: 'Indie Flower', cursive;
+      font-size: 1.2rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .gallery-item:hover .overlay {
+      opacity: 1;
+    }
+
+    /* Texto debajo de la foto (Manuscrito) */
+    .caption {
+      margin-top: 10px;
+      text-align: center;
+      font-family: 'Indie Flower', cursive;
+      font-weight: bold;
+      color: #555;
+      font-size: 1.3rem;
+    }
+
+    /* 3. Colores Pastel Alternados (Tu paleta) */
+    .gallery-item:nth-child(5n+1) .polaroid-frame { background-color: #ffffcc; transform: rotate(-2deg); }
+    .gallery-item:nth-child(5n+2) .polaroid-frame { background-color: #ffcc99; transform: rotate(2deg); }
+    .gallery-item:nth-child(5n+3) .polaroid-frame { background-color: #ffcccc; transform: rotate(-1deg); }
+    .gallery-item:nth-child(5n+4) .polaroid-frame { background-color: #ff99cc; transform: rotate(1.5deg); }
+    .gallery-item:nth-child(5n+5) .polaroid-frame { background-color: #ffccff; transform: rotate(-3deg); }
+
+    /* Animación de entrada */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- LIGHTBOX (Pantalla completa) --- */
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .lightbox.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80vh;
+      border: 5px solid white;
+      border-radius: 4px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    }
+    .close-btn {
+      position: absolute;
+      top: 20px; right: 30px;
+      color: white;
+      font-size: 3rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hearts-bg">
+    <div class="heart">❤</div><div class="heart">❤</div><div class="heart">❤</div>
+    <div class="heart">❤</div><div class="heart">❤</div><div class="heart">❤</div>
+  </div>
+
+  <nav class="navbar">
+    <a href="inicio.html" class="nav-btn">Inicio</a>
+    <a href="index.html" class="nav-btn">Carta</a>
+    <a href="galeria.html" class="nav-btn active">Galería</a>
+    <a href="contacto.html" class="nav-btn">Nuestra Canción</a>
+  </nav>
+
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="seal" style="background: #ff99cc; color: white;">📸</div>
+        <div>
+          <h1>Nuestros Recuerdos</h1>
+          <div class="meta">11 Momentos Inolvidables</div>
+        </div>
+      </header>
+
+      <main>
+        <div class="gallery-grid">
+          <div class="gallery-item" style="animation-delay: 0.1s;" onclick="openLightbox('img/1.jpeg')">
+            <div class="polaroid-frame">
+              <div class="tape"></div>
+              <div class="img-wrapper">
+                <img src="img/1.jpeg" alt="Foto 1" class="gallery-img">
+                <div class="overlay">El inicio ✨</div>
+              </div>
+              <div class="caption">#1 Juntos ⭐</div>
+            </div>
+          </div>
+
+          <div class="gallery-item" style="animation-delay: 0.2s;" onclick="openLightbox('img/2.jpeg')">
+            <div class="polaroid-frame">
+              <div class="tape"></div>
+              <div class="img-wrapper">
+                <img src="img/2.jpeg" alt="Foto 2" class="gallery-img">
+                <div class="overlay">Tu sonrisa 💖</div>
+              </div>
+              <div class="caption">#2 Risas 🌸</div>
+            </div>
+          </div>
+
+          <div class="gallery-item" style="animation-delay: 0.3s;" onclick="openLightbox('img/3.jpeg')">
+            <div class="polaroid-frame">
+              <div class="tape"></div>
+              <div class="img-wrapper">
+                <img src="img/3.jpeg" alt="Foto 3" class="gallery-img">
+                <div class="overlay">Magia pura ✨</div>
+              </div>
+              <div class="caption">#3 Magia ✨</div>
+            </div>
+          </div>
+
+          <div class="gallery-item" style="animation-delay: 0.4s;" onclick="openLightbox('img/4.jpeg')">
+            <div class="polaroid-frame">
+              <div class="tape"></div>
+              <div class="img-wrapper">
+                <img src="img/4.jpeg" alt="Foto 4" class="gallery-img">
+                <div class="overlay">Un día especial ☀️</div>
+              </div>
+              <div class="caption">#4 Sol ☀️</div>
+            </div>
+          </div>
+
+          <div class="gallery-item" style="animation-delay: 0.5s;" onclick="openLightbox('img/5.jpeg')">
+            <div class="polaroid-frame">
+              <div class="tape"></div>
+              <div class="img-wrapper">
+                <img src="img/5.jpeg" alt="Foto 5" class="gallery-img">
+                <div class="overlay">Abrazos 🤗</div>
+              </div>
+              <div class="caption">#5 Cariño 💖</div>
+            </div>
+          </div>
+
+          <div class="gallery-item" style="animation-delay: 0.6s;" onclick="openLightbox('img/6.jpeg')">
+            <div class="polaroid-frame">
+              <div class="tape"></div>
+              <div class="img-wrapper">
+                <img src="img/6.jpeg" alt="Foto 6" class="gallery-img">
+                <div class="overlay">Miradas 👀</div>
+              </div>
+              <div class="caption">#6 Nosotros 💑</div>
+            </div>
+          </div>
+
+          <div class="gallery-item" style="animation-delay: 0.7s;" onclick="openLightbox('img/7.jpeg')">
+            <div class="polaroid-frame">
+              <div class="tape"></div>
+              <div class="img-wrapper">
+                <img src="img/7.jpeg" alt="Foto 7" class="gallery-img">
+                <div class="overlay">Aventuras 🌍</div>
+              </div>
+              <div class="caption">#7 Viaje 🚀</div>
+            </div>
+          </div>
+
+          <div class="gallery-item" style="animation-delay: 0.8s;" onclick="openLightbox('img/8.jpeg')">
+            <div class="polaroid-frame">
+              <div class="tape"></div>
+              <div class="img-wrapper">
+                <img src="img/8.jpeg" alt="Foto 8" class="gallery-img">
+                <div class="overlay">Complicidad 😉</div>
+              </div>
+              <div class="caption">#8 Locuras 🤪</div>
+            </div>
+          </div>
+
+          <div class="gallery-item" style="animation-delay: 0.9s;" onclick="openLightbox('img/9.jpeg')">
+            <div class="polaroid-frame">
+              <div class="tape"></div>
+              <div class="img-wrapper">
+                <img src="img/9.jpeg" alt="Foto 9" class="gallery-img">
+                <div class="overlay">Paz 🕊️</div>
+              </div>
+              <div class="caption">#9 Calma 🍃</div>
+            </div>
+          </div>
+
+           <div class="gallery-item" style="animation-delay: 1.0s;" onclick="openLightbox('img/10.jpeg')">
+            <div class="polaroid-frame">
+              <div class="tape"></div>
+              <div class="img-wrapper">
+                <img src="img/10.jpeg" alt="Foto 10" class="gallery-img">
+                <div class="overlay">Detalles 🎁</div>
+              </div>
+              <div class="caption">#10 Amor ❤️</div>
+            </div>
+          </div>
+
+           <div class="gallery-item" style="animation-delay: 1.1s;" onclick="openLightbox('img/11.jpeg')">
+            <div class="polaroid-frame">
+              <div class="tape"></div>
+              <div class="img-wrapper">
+                <img src="img/11.jpeg" alt="Foto 11" class="gallery-img">
+                <div class="overlay">Por más 🥂</div>
+              </div>
+              <div class="caption">#11 Futuro ✨</div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+
+      <footer>
+        <div class="brand">Cada foto cuenta una historia</div>
+        <div class="thanks">Gracias por crear estos recuerdos conmigo.</div>
+      </footer>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="close-btn">&times;</span>
+    <img id="lightbox-img" src="" alt="Imagen Grande">
+  </div>
+
+  <script>
+    // 1. Confeti al cargar
+    window.onload = function() {
+      var duration = 3 * 1000;
+      var animationEnd = Date.now() + duration;
+      var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+      var interval = setInterval(function() {
+        var timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        var particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+      }, 250);
+    };
+
+    function randomInRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    // 2. Funciones del Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
+    function openLightbox(src) {
+      lightboxImg.src = src;
+      lightbox.classList.add('active');
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+    }
+  </script>
+
+</body>
+</html>
