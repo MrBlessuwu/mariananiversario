@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nuestra Música</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- ESTILOS ESPECÍFICOS PARA MÚSICA --- */
+    :root {
+      --music-pink: #ff99cc; /* Color dominante pedido */
+    }
+
+    /* Fondo de notas musicales */
+    .music-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .note {
+      position: absolute;
+      bottom: -10vh;
+      color: var(--music-pink);
+      opacity: 0;
+      font-size: 2rem;
+      animation: floatUpMusic 8s infinite linear;
+      text-shadow: 0 0 5px rgba(255, 153, 204, 0.5);
+    }
+    .note:nth-child(even) { color: #cc99ff; } /* Alternar color lila */
+
+    @keyframes floatUpMusic {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      20% { opacity: 0.8; }
+      100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Contenedor de la canción */
+    .song-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 60px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 25px;
+      border-radius: 20px;
+      border-bottom: 4px solid var(--music-pink);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animación de ondas de fondo */
+    .song-section::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; width: 100%; height: 5px;
+      background: repeating-linear-gradient(90deg, 
+        var(--music-pink), var(--music-pink) 10px, 
+        transparent 10px, transparent 20px);
+      opacity: 0.5;
+    }
+
+    /* Layout video + texto */
+    .song-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    }
+    .video-wrapper {
+      flex: 1 1 300px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .video-wrapper iframe {
+      width: 100%;
+      height: 250px; /* Altura ajustada */
+    }
+    .text-wrapper {
+      flex: 1 1 300px;
+    }
+
+    /* Títulos y textos */
+    .song-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2rem;
+      color: var(--music-pink);
+      margin: 0 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    /* Vinilo giratorio decorativo */
+    .vinyl-icon {
+      width: 40px; height: 40px;
+      background: radial-gradient(circle, #000 0%, #111 50%, #333 100%);
+      border-radius: 50%;
+      border: 2px solid var(--music-pink);
+      display: inline-block;
+      position: relative;
+      animation: spin 5s linear infinite;
+    }
+    .vinyl-icon::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px; height: 12px;
+      background: var(--music-pink);
+      border-radius: 50%;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* Frase animada (Typewriter) */
+    .lyric-highlight {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.5rem;
+      color: #fff;
+      margin-bottom: 15px;
+      border-left: 3px solid var(--music-pink);
+      padding-left: 15px;
+      display: inline-block;
+      text-shadow: 0 0 10px var(--music-pink);
+    }
+
+    /* Hover botones tipo piano */
+    .nav-btn:hover {
+      background: white !important;
+      color: black !important;
+      transform: translateY(2px);
+      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Galería mini */
+    .mini-gallery {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .mini-pic {
+      width: 60px; height: 60px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; color: rgba(255,255,255,0.5);
+      border: 1px dashed var(--music-pink);
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="music-bg">
+    <div class="note" style="left: 10%; animation-duration: 7s;">♪</div>
+    <div class="note" style="left: 30%; animation-duration: 9s; animation-delay: 1s;">♫</div>
+    <div class="note" style="left: 50%; animation-duration: 6s; animation-delay: 2s;">♩</div>
+    <div class="note" style="left: 70%; animation-duration: 8s; animation-delay: 0.5s;">♪</div>
+    <div class="note" style="left: 90%; animation-duration: 10s; animation-delay: 3s;">♫</div>
+  </div>
+
+  <nav class="navbar">
+    <a href="inicio.html" class="nav-btn">Inicio</a>
+    <a href="index.html" class="nav-btn">Carta</a>
+    <a href="galeria.html" class="nav-btn">Galería</a>
+    <a href="contacto.html" class="nav-btn active">Nuestra Canción</a>
+  </nav>
+
+  <div class="wrap">
+    <div class="card" style="border-color: var(--music-pink);">
+      <header>
+        <div class="seal" style="background: var(--music-pink); color: white;">♫</div>
+        <div>
+          <h1>Nuestra Banda Sonora</h1>
+          <div class="meta">Las melodías de nuestros 14 meses</div>
+        </div>
+      </header>
+
+      <main>
+        
+        <div class="song-section">
+          <div class="song-title">
+            <div class="vinyl-icon"></div> Yellow - Coldplay
+          </div>
+          
+          <div class="song-content">
+            <div class="video-wrapper">
+              <iframe src="https://www.youtube.com/embed/kPa7bsKwL-c?si=Sd4KxgGrJqJkT6Tt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            
+            <div class="text-wrapper">
+              <div class="lyric-highlight">
+                "Look at the stars, look how they shine for you..."
+              </div>
+              
+              <p class="p" style="font-size: 0.95rem;">
+                Esta canción siempre me recuerda a ti. Me recuerda los momentos junto a ti. 
+                Me asusta cada vez que suena, pero de la misma manera me asusta estar contigo... 
+                pero no es por miedo.
+              </p>
+              <p class="p" style="font-size: 0.95rem; font-style: italic; color: #ffcccc;">
+                "Es porque pueda que no vuelva a experimentar esos sentimientos junto a nadie más que a ti."
+              </p>
+
+              <div class="mini-gallery">
+                <div class="mini-pic">🎧</div>
+                <div class="mini-pic">✨</div>
+                <div class="mini-pic">💛</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="song-section">
+          <div class="song-title">
+            <div class="vinyl-icon" style="animation-direction: reverse;"></div> I Love You So
+          </div>
+          
+          <div class="song-content">
+            <div class="text-wrapper">
+               <div class="lyric-highlight">
+                "But I love you so (please let me go)..."
+              </div>
+
+              <p class="p">
+                Esta es la canción que yo te dedico. Aunque la letra hable de despedidas, 
+                para mí significa la intensidad de lo que siento. Es ese sentimiento de querer 
+                estar ahí a pesar de todo.
+              </p>
+              
+              <p class="p">
+                Cada vez que la escucho, imagino nuestros momentos, los buenos y los difíciles, 
+                y cómo siempre elijo quedarme.
+              </p>
+            </div>
+
+            <div class="video-wrapper">
+              <iframe src="https://www.youtube.com/embed/taxrPk_FcSc?si=Gbw0ulCD6O9JjEG4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+      <footer>
+        <div class="brand">Música que conecta corazones</div>
+        <div class="thanks">Escúchalas cuando me extrañes.</div>
+      </footer>
+    </div>
+  </div>
+
+</body>
+</html>
