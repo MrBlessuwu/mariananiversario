@@ -7,21 +7,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   
   <style>
-    /* --- CONFIGURACIÓN GENERAL --- */
     body {
       margin: 0;
-      padding: 0;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      /* Fondo pastel suave turquesa/blanco */
       background: linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%);
       font-family: 'Inter', sans-serif;
       overflow: hidden;
     }
 
-    /* --- EL SOBRE (ENVELOPE) --- */
     .envelope-wrapper {
       position: relative;
       cursor: pointer;
@@ -31,53 +27,9 @@
     .envelope {
       width: 300px;
       height: 200px;
-      background: #4dd0e1; /* Turquesa vibrante base */
+      background: #0097a7; /* Fondo oscuro del interior del sobre */
       position: relative;
-      border-radius: 0 0 10px 10px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-
-    /* Solapa frontal (Triángulo izquierdo y derecho) */
-    .envelope::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 100px 150px 100px 150px; /* Forma triangular */
-      border-color: transparent transparent #26c6da transparent; /* Turquesa un poco más oscuro */
-      z-index: 2; /* Encima de la carta */
-      border-bottom-color: #26c6da;
-      border-radius: 0 0 10px 10px;
-    }
-
-    /* Solapa superior (La que se abre) */
-    .flap {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 100px 150px 0 150px;
-      border-color: #00acc1 transparent transparent transparent; /* Turquesa oscuro solapa */
-      z-index: 3; /* Encima de todo al inicio */
-      transform-origin: top;
-      transition: transform 0.6s ease, z-index 0.2s;
-    }
-
-    /* Sello de corazón */
-    .seal {
-      position: absolute;
-      bottom: 20px; /* Posición en la solapa */
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 2rem;
-      color: #fff;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      z-index: 4;
     }
 
     /* --- LA CARTA INTERIOR --- */
@@ -90,8 +42,8 @@
       height: 180px;
       background: white;
       border-radius: 5px;
-      transition: transform 0.6s 0.4s ease; /* Delay para esperar que abra el sobre */
-      z-index: 1; /* Dentro del sobre */
+      transition: transform 0.6s 0.4s ease; /* Sale después de abrir */
+      z-index: 1; /* Nivel más bajo */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -120,7 +72,7 @@
       background-color: #00acc1;
       color: white;
       border: none;
-      padding: 8px 16px;
+      padding: 8px 20px;
       border-radius: 20px;
       font-size: 0.9rem;
       cursor: pointer;
@@ -128,6 +80,7 @@
       font-weight: bold;
       box-shadow: 0 4px 10px rgba(0, 172, 193, 0.4);
       transition: transform 0.2s, background 0.2s;
+      display: inline-block;
     }
 
     .btn:hover {
@@ -135,56 +88,137 @@
       transform: scale(1.05);
     }
 
-    /* --- ANIMACIÓN DE APERTURA (CLASE .OPEN) --- */
+    /* --- PARTES DEL SOBRE (Triángulos CSS) --- */
+    
+    /* Costados (Izquierda y Derecha) - Ahora cierran el sobre */
+    .pocket-left {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 100px 0 100px 150px; /* Triángulo lateral */
+      border-color: transparent transparent transparent #26c6da; /* Turquesa medio */
+      z-index: 2;
+    }
+    
+    .pocket-right {
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 100px 150px 100px 0; /* Triángulo lateral */
+      border-color: transparent #26c6da transparent transparent; /* Turquesa medio */
+      z-index: 2;
+    }
+
+    /* Frente (Triángulo de abajo) */
+    .pocket-bottom {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 0 150px 110px 150px; /* Triángulo inferior */
+      border-color: transparent transparent #4dd0e1 transparent; /* Turquesa claro frontal */
+      z-index: 3; /* Encima de los lados */
+    }
+
+    /* Tapa Superior (La que se abre) */
+    .flap {
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 110px 150px 0 150px; /* Triángulo superior */
+      border-color: #00acc1 transparent transparent transparent; /* Turquesa oscuro tapa */
+      z-index: 4; /* Encima de todo al inicio */
+      transform-origin: top;
+      transition: transform 0.6s ease, z-index 0.2s;
+    }
+
+    /* Sello */
+    .seal {
+      position: absolute;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2rem;
+      color: #fff;
+      z-index: 5;
+    }
+
+    /* --- ANIMACIÓN AL ABRIR --- */
     .envelope-wrapper.open .flap {
       transform: rotateX(180deg);
-      z-index: 0; /* Se va al fondo */
+      z-index: 0; /* Se va atrás */
     }
 
     .envelope-wrapper.open .letter {
-      transform: translateX(-50%) translateY(-120px); /* Sube la carta */
-      z-index: 2; /* Ahora queda encima del sobre para poder dar click */
+      transform: translateX(-50%) translateY(-130px); /* Sube más arriba */
+      z-index: 5; /* Queda encima de todo para poder dar click */
     }
 
-    /* Texto de instrucción */
     .hint {
       position: absolute;
-      bottom: 15%;
+      bottom: 20%;
       color: #00838f;
-      font-size: 0.9rem;
-      opacity: 0.8;
+      font-weight: 600;
       animation: blink 2s infinite;
     }
 
-    /* Animaciones decorativas */
     @keyframes float {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+      50% { transform: translateY(-15px); }
     }
-    @keyframes blink {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
+    @keyframes blink { 50% { opacity: 0.5; } }
 
   </style>
 </head>
 <body>
 
-  <div class="envelope-wrapper" onclick="this.classList.toggle('open')">
+  <audio id="bg-music" loop>
+    <source src="cancion.mp3" type="audio/mpeg">
+    Tu navegador no soporta el audio.
+  </audio>
+
+  <div class="envelope-wrapper" onclick="openEnvelope()">
     <div class="envelope">
+      
+      <div class="letter">
+        <h2>Hola mi amor...</h2>
+        <p>Tengo algo especial para ti.</p>
+        <a href="inicio.html" class="btn">Presióname</a>
+      </div>
+
+      <div class="pocket-left"></div>
+      <div class="pocket-right"></div>
+      <div class="pocket-bottom"></div>
+      
       <div class="flap">
         <div class="seal">❤</div>
       </div>
 
-      <div class="letter">
-        <h2>Hola mi amor...</h2>
-        <p>Tengo algo especial para ti.</p>
-        <a href="index.html" class="btn">Presióname</a>
-      </div>
     </div>
   </div>
 
   <div class="hint">Toca el sobre para abrir 💌</div>
+
+  <script>
+    function openEnvelope() {
+      // 1. Añadir clase para animación visual
+      const envelope = document.querySelector('.envelope-wrapper');
+      envelope.classList.toggle('open');
+
+      // 2. Reproducir música al tocar
+      const audio = document.getElementById('bg-music');
+      // Solo reproducir si está pausado (para que no se reinicie si le da doble click)
+      if (audio.paused) {
+        audio.volume = 0.5; // Volumen al 50% para no asustar
+        audio.play().catch(error => {
+          console.log("Esperando interacción para reproducir audio...");
+        });
+      }
+    }
+  </script>
 
 </body>
 </html>
